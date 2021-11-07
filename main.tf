@@ -1,7 +1,7 @@
 provider "aws" {
   region = "eu-west-1"
 }
-
+//
 data "aws_iam_policy_document" "ecs_agent" {
   statement {
     actions = ["sts:AssumeRole"]
@@ -148,14 +148,32 @@ resource "aws_ecs_task_definition" "hello_world" {
   network_mode             = "awsvpc" # 
   requires_compatibilities = ["EC2"]
   cpu                      = 1024
-  memory                   = 256
+  memory                   = 2048
+
+/*
+ container_definitions = jsonencode([
+    {
+      name      = "hello-world-app"
+      image     = "dmiryan.mymir"
+      cpu       = 100
+      memory    = 128
+      essential = true
+      portMappings = [
+        {
+          containerPort = 80
+          hostPort      = 80
+        }
+      ]
+    }
+  ])
+}*/
 
   container_definitions = <<DEFINITION
 [
   {
     "image": "dmiryan/mymir",
-    "cpu": 1024,
-    "memory": 128,
+    "cpu":  1024,
+    "memory": 1024,
     "name": "hello-world-app",
     "networkMode": "awsvpc",
     "portMappings": [
@@ -163,20 +181,12 @@ resource "aws_ecs_task_definition" "hello_world" {
         "containerPort": 80,
         "hostPort": 80
       }
-    ],
-    "logConfiguration": {
-      "logDriver": "awslogs",
-      "options": {
-        "awslogs-group": "example-task-group",
-        "awslogs-region": "eu-west-1",
-        "awslogs-stream-prefix": "streaming"
-      }
-    }
-
+    ]  
   }
 ]
 DEFINITION
 }
+
 
 resource "aws_security_group" "hello_world_task" {
   name        = "example-task-security-group"
@@ -214,6 +224,7 @@ resource "aws_ecs_service" "hello_world" {
   cluster         = aws_ecs_cluster.main.id
   task_definition = aws_ecs_task_definition.hello_world.arn
   desired_count   = var.app_count
+  deployment_minimum_healthy_percent = 100
   launch_type     = "EC2"
 
   network_configuration {
@@ -248,7 +259,7 @@ resource "aws_launch_configuration" "ecs_launch_config" {
     iam_instance_profile = aws_iam_instance_profile.ecs_agent.name
     security_groups      = [aws_security_group.hello_world_task.id]
     user_data            = "#!/bin/bash\necho ECS_CLUSTER=example-cluster >> /etc/ecs/ecs.config"
-    instance_type        = "t3.micro"
+    instance_type        = "t3.large"
     key_name             = aws_key_pair.ed1.id
 }
 
