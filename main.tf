@@ -280,3 +280,4 @@ resource "aws_autoscaling_group" "failure_analysis_ecs_asg" {
     health_check_grace_period = 300
     health_check_type         = "EC2"
 }
+//
