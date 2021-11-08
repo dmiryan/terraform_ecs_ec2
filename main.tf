@@ -40,7 +40,7 @@ data "aws_availability_zones" "available_zones" {
 resource "aws_subnet" "public" {
   //count                   = 2
   cidr_block              = "10.32.1.0/24"
-  //availability_zone       = data.aws_availability_zones.available_zones.names[count.index]
+  availability_zone       = "eu-west-1a"
   vpc_id                  = aws_vpc.default.id
   map_public_ip_on_launch = true
 }
@@ -48,7 +48,7 @@ resource "aws_subnet" "public" {
 resource "aws_subnet" "public2" {
   //count                   = 2
   cidr_block              = "10.32.2.0/24"
-  //availability_zone       = data.aws_availability_zones.available_zones.names[count.index]
+  availability_zone       = "eu-west-1b"
   vpc_id                  = aws_vpc.default.id
   map_public_ip_on_launch = true
 }
@@ -57,7 +57,7 @@ resource "aws_subnet" "public2" {
 resource "aws_subnet" "private" {
   //count             = 2
   cidr_block          = "10.32.11.0/24"
-  //availability_zone = data.aws_availability_zones.available_zones.names[count.index]
+  availability_zone = "eu-west-1a"
   vpc_id            = aws_vpc.default.id
 }
 
