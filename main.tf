@@ -1,7 +1,7 @@
 provider "aws" {
   region = "eu-west-1"
 }
-//
+////
 data "aws_iam_policy_document" "ecs_agent" {
   statement {
     actions = ["sts:AssumeRole"]
